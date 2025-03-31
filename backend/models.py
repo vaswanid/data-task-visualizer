@@ -7,7 +7,7 @@ class Task(db.model):
     __tablename__ = 'tasks'
 
     id = db.Column(db.Integer, primary_key=True)
-    filters = db.Column(db.Text)  # Use Text to allow large filter JSON
+    filters = db.Column(db.Text) #Text to allow larger filter JSON
     status = db.Column(db.String(64), default='pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     completed_at = db.Column(db.DateTime, nullable=True)
