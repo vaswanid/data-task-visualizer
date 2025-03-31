@@ -3,11 +3,11 @@ from datetime import datetime
 from backend import db
 
 
-class Task(db.model):
+class Task(db.Model):
     __tablename__ = 'tasks'
 
     id = db.Column(db.Integer, primary_key=True)
-    filters = db.Column(db.Text) #Text to allow larger filter JSON
+    filters = db.Column(db.Text) #Using 'Text' instead of 'String' to allow larger filter JSON
     status = db.Column(db.String(64), default='pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     completed_at = db.Column(db.DateTime, nullable=True)
@@ -15,7 +15,7 @@ class Task(db.model):
     # Relationship with Car (aka Record)
     cars = db.relationship('Car', back_populates='tasks', lazy=True)
 
-class Car(db.model):
+class Car(db.Model):
     __tablename__ = 'cars'
     id = db.Column(db.Integer, primary_key = True)
 
