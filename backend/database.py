@@ -1,9 +1,9 @@
-from flask_sqlalchemy import SQLAlchemy
-from flask import Flask
+# === backend/database.py ===
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Set up Flask app and SQLAlchemy instance
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./tasks.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+DATABASE_URL = "sqlite:///./tasks.db"
 
-db = SQLAlchemy(app)
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
