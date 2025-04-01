@@ -1,4 +1,3 @@
-# === backend/models.py ===
 from sqlalchemy import Column, Integer, String, Float, Date, Boolean, ForeignKey, Text, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime

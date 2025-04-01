@@ -55,6 +55,9 @@ class TaskBase(BaseModel):
 class TaskCreate(TaskBase):
     pass
 
+class TaskUpdate(TaskBase):
+    status: Optional[str] = None
+    
 class Task(TaskBase):
     id: int
     filters: Optional[str] = None
@@ -81,5 +84,8 @@ def create_tasks(task: TaskBase, db: db_dependency):
 @app.get("/tasks/", response_model=List[Task])
 def read_tasks(db: db_dependency, skip: int=0, limit: int=100):
     return db.query(models.Task).offset(skip).limit(limit).all()
+
+
+
    
 
