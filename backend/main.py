@@ -84,7 +84,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 @app.post("/tasks/", response_model = Task)        
 def create_tasks(task: TaskBase, db: db_dependency):
     db_task = models.Task(
-        filters = Task.filters,
+        filters = task.filters,
         status = "Pending",
         created_at = datetime.utcnow()
     )
@@ -136,7 +136,7 @@ def update_task(task_id: int, task_update: TaskUpdate, db: db_dependency):
     return task
 
 #DELETE  /tasks/{task_id}
-@app.delete("/tasks")
+@app.delete("/tasks/{task_id}")
 def delete_task(task_id: int, db: db_dependency):
     task = db.query(models.Task).filter(models.Task.id == task_id).first()
     if not task:
@@ -144,6 +144,8 @@ def delete_task(task_id: int, db: db_dependency):
     db.delete(task)
     db.commit()
     return {"message": "Task deleted successfully"}
+
+
 
 
 
