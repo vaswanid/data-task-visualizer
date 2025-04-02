@@ -9,14 +9,17 @@ DATA_PATH = Path(__file__).parent / "data"
 
 def load_json_data():
     with open(DATA_PATH / "source_a.json") as f:
-        return json.load(f)
+        data = json.load(f)
+    print("✅ JSON data:", data)
+    return data
 
 
 def load_csv_data():
-    with open(DATA_PATH / "source_b.csv", newline='') as f:
+    with open("backend/data/source_b.csv") as f:    
         reader = csv.DictReader(f)
-        return list(reader)
-
+        data = list(reader)
+    print("✅ CSV data:", data)
+    return data
 
 def clean_data(records):
     for r in records:

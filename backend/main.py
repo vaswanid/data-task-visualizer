@@ -1,17 +1,33 @@
-from fastapi import FastAPI, HTTPException, Depends
-from typing import Annotated, List, Optional
+from fastapi import FastAPI, Request, Depends
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from database import SessionLocal, engine
-from database import engine
 from datetime import datetime
-import models
-from backend import task_queue
+from . import models
+from .database import SessionLocal, engine
+from .models import Task, Car
+from . import task_queue
+from typing import Optional, List, Annotated
+from fastapi.responses import FileResponse
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+import asyncio
+import os
+from fastapi import HTTPException
 
-# Initialize app
+
 app = FastAPI()
 
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+@app.get("/")
+def serve_home():
+    return FileResponse("frontend/index.html")
+
+templates = Jinja2Templates(directory="templates")
+
+from fastapi.middleware.cors import CORSMiddleware
 # Enable CORS (important for frontend communication)
 app.add_middleware(
     CORSMiddleware,
@@ -79,10 +95,25 @@ class TaskCreateResponse(BaseModel):
      
 db_dependency = Annotated[Session, Depends(get_db)]
 
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
+
+@app.get("/cars")
+def get_all_cars(db: Session = Depends(get_db)):
+    return db.query(models.Car).all()
+
+@app.get("/tasks/{task_id}/cars")
+def get_task_cars(task_id: int, db: Session = Depends(get_db)):
+    return db.query(models.Car).filter(models.Car.task_id == task_id).all()
+
+@app.on_event("startup")
+async def start_background_tasks():
+    asyncio.create_task(task_queue.process_tasks())
+
 # CREATE =
 # POST /tasks
 @app.post("/tasks/", response_model = Task)        
-def create_tasks(task: TaskBase, db: db_dependency):
+async def create_tasks(task: TaskBase, db: db_dependency):
     db_task = models.Task(
         filters = task.filters,
         status = "Pending",
@@ -91,7 +122,7 @@ def create_tasks(task: TaskBase, db: db_dependency):
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
-    task_queue.put((db_task.id, task.filters))  # send to job queue for processing
+    await task_queue.put((db_task.id, task.filters))  # send to job queue for processing
     
     return {
         "message": "Task created successfully",
@@ -145,6 +176,9 @@ def delete_task(task_id: int, db: db_dependency):
     db.commit()
     return {"message": "Task deleted successfully"}
 
+@app.on_event("startup")
+async def start_background_tasks():
+    asyncio.create_task(task_queue.process_tasks())
 
 
 

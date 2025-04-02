@@ -1,0 +1,23 @@
+[
+    {
+      "car_company": "Hyundai",
+      "car_model": "Elantra",
+      "date_of_sale": "2024-03-01T00:00:00",
+      "price": 16000,
+      "discount": 900,
+      "warranty_years": 2,
+      "is_new": true,
+      "mileage": 7000
+    },
+    {
+      "car_company": "Chevrolet",
+      "car_model": "Malibu",
+      "date_of_sale": "2024-02-20T00:00:00",
+      "price": 22000,
+      "discount": 1500,
+      "warranty_years": 3,
+      "is_new": false,
+      "mileage": 28000
+    }
+  ]
+  

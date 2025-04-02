@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, Date, Boolean, ForeignKey, Text, DateTime
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Text, Date
 from sqlalchemy.orm import relationship
+from .database import Base
 from datetime import datetime
-from database import Base
 
 class Task(Base):
     __tablename__ = 'tasks'
